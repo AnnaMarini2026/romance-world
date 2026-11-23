@@ -1,0 +1,329 @@
+
+<html>
+<head>
+    <title>La mia libreria - Romance World</title>
+    <link rel="stylesheet" href="stile.css">
+</head>
+
+<body>
+
+<center>
+
+    <h1>♡ Il mio spazio personale ♡</h1>
+
+    <p id="benvenuto"></p>
+
+    <a href="libreria.html">Scopri nuovi libri</a> |
+    <a href="index.html">Home</a>
+
+    <hr color="pink">
+
+    <h2>I miei libri letti 📚</h2>
+
+    <div class="card">
+
+        <h3>Aggiungi un libro</h3>
+
+        <input id="titolo" placeholder="Titolo del libro">
+
+        <br>
+
+        <input id="autore" placeholder="Nome dell'autore">
+
+        <br>
+
+        <textarea id="recensione"
+            placeholder="Scrivi la tua recensione..."
+            rows="5"></textarea>
+
+        <br>
+
+        <label>Il tuo voto:</label>
+
+        <select id="voto">
+            <option value="1">⭐ 1 stella</option>
+            <option value="2">⭐⭐ 2 stelle</option>
+            <option value="3">⭐⭐⭐ 3 stelle</option>
+            <option value="4">⭐⭐⭐⭐ 4 stelle</option>
+            <option value="5" selected>⭐⭐⭐⭐⭐ 5 stelle</option>
+        </select>
+
+        <br>
+
+        <button onclick="aggiungiLibro()">
+            Aggiungi alla mia libreria 💗
+        </button>
+
+    </div>
+
+    <h2>Le mie recensioni</h2>
+
+    <div id="libri"></div>
+
+    <br>
+
+    <button onclick="esci()">Esci dall'account</button>
+
+</center>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+
+<script>
+
+let utente;
+
+
+// CONTROLLO ACCOUNT
+
+async function controllaAccesso() {
+
+    const { data, error } = await db.auth.getUser();
+
+    if (error || !data.user) {
+        window.location.href = "registrazione.html";
+        return;
+    }
+
+    utente = data.user;
+
+    const { data: profilo, error: erroreProfilo } =
+        await db.from("profiles")
+        .select("username, age")
+        .eq("id", utente.id)
+        .single();
+
+    if (erroreProfilo) {
+        alert("Impossibile caricare il profilo.");
+        return;
+    }
+
+    document.getElementById("benvenuto").innerHTML =
+        "Benvenuta/o, <b>" + sicuro(profilo.username) + "</b>! 💕";
+
+    const parametri = new URLSearchParams(window.location.search);
+
+    if (parametri.get("libro")) {
+        document.getElementById("titolo").value =
+            parametri.get("libro");
+    }
+
+    caricaLibri();
+
+}
+
+
+// AGGIUNGI LIBRO
+
+async function aggiungiLibro() {
+
+    let titolo = document.getElementById("titolo").value.trim();
+    let autore = document.getElementById("autore").value.trim();
+    let recensione = document.getElementById("recensione").value.trim();
+    let voto = Number(document.getElementById("voto").value);
+
+    if (!titolo) {
+        alert("Inserisci il titolo del libro!");
+        return;
+    }
+
+    const { error } = await db.from("reviews").insert({
+
+        user_id: utente.id,
+        book_title: titolo,
+        author: autore,
+        review: recensione,
+        rating: voto
+
+    });
+
+    if (error) {
+        alert("Errore: " + error.message);
+    } else {
+
+        alert("Libro aggiunto alla tua libreria! 💗");
+
+        document.getElementById("titolo").value = "";
+        document.getElementById("autore").value = "";
+        document.getElementById("recensione").value = "";
+        document.getElementById("voto").value = "5";
+
+        caricaLibri();
+
+    }
+
+}
+
+
+// MOSTRA I LIBRI PERSONALI
+
+async function caricaLibri() {
+
+    const { data, error } = await db.from("reviews")
+        .select("*")
+        .eq("user_id", utente.id)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        document.getElementById("libri").textContent =
+            "Errore nel caricamento dei libri.";
+        return;
+    }
+
+    let contenuto = "";
+
+    data.forEach(libro => {
+
+        let stelle = "⭐".repeat(libro.rating);
+
+        contenuto += `
+
+        <div class="card">
+
+            <h3>${sicuro(libro.book_title)}</h3>
+
+            <p>Autore: ${sicuro(libro.author || "Non indicato")}</p>
+
+            <p class="stelle">${stelle}</p>
+
+            <p>${sicuro(libro.review || "Nessuna recensione.")}</p>
+
+            <button onclick="modificaLibro(${libro.id})">
+                Modifica recensione ✏️
+            </button>
+
+            <button onclick="eliminaLibro(${libro.id})">
+                Elimina 🗑️
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+    document.getElementById("libri").innerHTML =
+        contenuto || "Non hai ancora aggiunto libri. Inizia subito! 💗";
+
+}
+
+
+// PROTEZIONE DEI TESTI
+
+function sicuro(testo) {
+
+    return String(testo).replace(/[&<>"']/g, carattere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[carattere]);
+
+}
+
+
+// MODIFICA RECENSIONE E VOTO
+
+async function modificaLibro(id) {
+
+    const { data: libro, error: errore } = await db
+        .from("reviews")
+        .select("*")
+        .eq("id", id)
+        .eq("user_id", utente.id)
+        .single();
+
+    if (errore || !libro) {
+        alert("Non riesco a trovare questa recensione.");
+        return;
+    }
+
+    let nuovaRecensione = prompt(
+        "Scrivi la nuova recensione:",
+        libro.review || ""
+    );
+
+    if (nuovaRecensione === null) return;
+
+    let nuovoVoto = prompt(
+        "Inserisci un voto da 1 a 5:",
+        libro.rating
+    );
+
+    if (nuovoVoto === null) return;
+
+    nuovoVoto = Number(nuovoVoto);
+
+    if (!Number.isInteger(nuovoVoto) ||
+        nuovoVoto < 1 || nuovoVoto > 5) {
+
+        alert("Inserisci un voto valido da 1 a 5!");
+        return;
+
+    }
+
+    const { error } = await db.from("reviews")
+        .update({
+            review: nuovaRecensione,
+            rating: nuovoVoto
+        })
+        .eq("id", id)
+        .eq("user_id", utente.id);
+
+    if (error) {
+
+        alert("Errore durante la modifica.");
+
+    } else {
+
+        alert("Recensione modificata! 💗");
+
+        caricaLibri();
+
+    }
+
+}
+
+
+// ELIMINA LIBRO
+
+async function eliminaLibro(id) {
+
+    if (!confirm("Vuoi eliminare questa recensione?")) {
+        return;
+    }
+
+    const { error } = await db.from("reviews")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", utente.id);
+
+    if (error) {
+        alert("Non è stato possibile eliminare il libro.");
+    } else {
+        alert("Libro eliminato!");
+        caricaLibri();
+    }
+
+}
+
+
+// ESCI DALL'ACCOUNT
+
+async function esci() {
+
+    await db.auth.signOut();
+
+    window.location.href = "registrazione.html";
+
+}
+
+
+controllaAccesso();
+
+</script>
+
+</body>
+</html>
+

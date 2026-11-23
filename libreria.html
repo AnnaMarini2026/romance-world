@@ -1,0 +1,1342 @@
+
+
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scopri i libri - Romance World</title>
+    <link rel="stylesheet" href="stile.css">
+</head>
+
+<body>
+
+<center>
+
+    <h1>♡ Scopri nuovi libri ♡</h1>
+
+    <p>Trova la tua prossima storia d'amore! 💗</p>
+
+    <a href="profilo.html">La mia libreria</a> |
+    <a href="index.html">Home</a>
+
+    <hr color="pink">
+
+    <h2>Libri consigliati per te</h2>
+
+    <p id="etaUtente">
+        Scopri tutte le nostre storie d'amore! 💕
+    </p>
+
+    <!-- CATEGORIE -->
+
+    <div id="categorie">
+
+        <button onclick="filtraCategoria('Tutti')">
+            Tutti i libri
+        </button>
+
+        <button onclick="filtraCategoria('Young Adult')">
+            Young Adult
+        </button>
+
+        <button onclick="filtraCategoria('Dark Romance')">
+    Dark Romance 
+</button>
+
+        <button onclick="filtraCategoria('Fantasy Romance')">
+            Fantasy Romance
+        </button>
+
+        <button onclick="filtraCategoria('Contemporary Romance')">
+            Contemporary Romance
+        </button>
+
+        <button onclick="filtraCategoria('Rom-Com')">
+            Rom-Com
+        </button>
+       <br>
+       <br>
+        <button onclick="filtraCategoria('Sport Romance')">
+            Sport Romance
+        </button>
+
+    </div>
+
+    <hr color="pink">
+
+    <!-- CATALOGO -->
+
+    <div id="catalogo"></div>
+
+    <hr color="pink">
+
+    <!-- DETTAGLIO LIBRO -->
+
+    <h2 id="titoloDettaglio"></h2>
+
+    <div id="dettaglio" class="card">
+        Clicca sulla copertina di un libro per scoprirne la trama! 💕
+    </div>
+
+</center>
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+
+<script>
+
+
+let libri = [
+
+    {
+        titolo: "Tutte le volte che ho scritto ti amo",
+        autore: "Jenny Han",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Lara Jean scrive lettere d'amore ai ragazzi di cui si è innamorata, senza mai spedirle. Quando le lettere vengono recapitate misteriosamente, la sua vita sentimentale cambia completamente.",
+        copertina:"https://m.media-amazon.com/images/I/7121liqU+wL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "P.S. Ti amo ancora",
+        autore: "Jenny Han",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Lara Jean e Peter stanno insieme, ma l'arrivo di una persona del passato mette alla prova la loro relazione.",
+        copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOA0RX3etHx1lAQaekcNHKgj25GYxCE4t05jVULfHWGGDd2xCDmaRFa-c&s=10"
+    },
+
+    {
+        titolo: "Tua per sempre, Lara Jean",
+        autore: "Jenny Han",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Lara Jean si prepara a concludere il liceo e deve affrontare importanti decisioni sul suo futuro e sulla sua storia con Peter.",
+        copertina:"https://m.media-amazon.com/images/I/71yBmJroc2L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Meglio che nei film",
+        autore: "Lynn Painter",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Rom-Com",
+        trama: "Liz sogna una storia d'amore come quelle dei film romantici. Chiede aiuto a Wes, il suo vicino di casa, per conquistare il ragazzo che le piace, ma potrebbe scoprire di avere già accanto la persona giusta.",
+        copertina:"https://m.media-amazon.com/images/I/71lFPlZp0RL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "The Do-Over",
+        autore: "Lynn Painter",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Emilie vive un giorno di San Valentino disastroso che sembra ripetersi continuamente. Per cambiare il corso degli eventi dovrà imparare a guardare le cose da una prospettiva diversa.",
+        copertina:"https://m.media-amazon.com/images/I/71QNCH8VwOL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Anna and the French Kiss",
+        autore: "Stephanie Perkins",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Anna viene mandata a studiare a Parigi, dove conosce nuovi amici e incontra Etienne, un ragazzo che potrebbe cambiare il suo modo di vedere l'amore.",
+        copertina:"https://giuntialpunto.it/cdn/shop/files/9781409579939.1000.jpg?v=1726880676"
+    },
+
+    {
+        titolo: "Lola and the Boy Next Door",
+        autore: "Stephanie Perkins",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Lola ama la moda e sogna una vita fuori dagli schemi. Il ritorno di due ragazzi del suo passato complicherà i suoi sentimenti.",
+        copertina:"https://m.media-amazon.com/images/I/81sLotqstuL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Isla and the Happily Ever After",
+        autore: "Stephanie Perkins",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Isla incontra nuovamente Josh a Parigi. Tra sogni, viaggi e nuove esperienze, i due scopriranno se il loro sentimento può diventare qualcosa di importante.",
+        copertina:"https://m.media-amazon.com/images/I/81mbaGApoZL._UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "L'estate nei tuoi occhi",
+        autore: "Jenny Han",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Belly trascorre ogni estate nella casa al mare insieme alla famiglia Fisher. Crescendo, i sentimenti e i rapporti tra i ragazzi cambiano.",
+        copertina:"https://www.rizzolilibri.it/content/uploads/2023/06/978881718409HIG.webp"
+    },
+
+    {
+        titolo: "Non è estate senza te",
+        autore: "Jenny Han",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Dopo un'estate difficile, Belly si ritrova ad affrontare nuovi sentimenti, ricordi e cambiamenti nella sua vita.",
+        copertina:"https://m.media-amazon.com/images/I/71eMFf+IbaL._UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Per noi sarà sempre estate",
+        autore: "Jenny Han",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Belly deve prendere una decisione importante sul proprio futuro e capire quale sia davvero il suo posto nel cuore delle persone che ama.",
+        copertina:"https://m.media-amazon.com/images/I/717Sc-sbdeL._UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Love & Gelato",
+        autore: "Jenna Evans Welch",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Lina trascorre l'estate in Italia per rispettare l'ultimo desiderio della madre. Tra Firenze, nuovi amici e un diario misterioso, scoprirà molto sul passato della sua famiglia.",
+        copertina:"https://m.media-amazon.com/images/I/81POFh7I6wL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Love & Luck",
+        autore: "Jenna Evans Welch",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Durante un viaggio in Irlanda, Addie cerca di ritrovare se stessa, affrontando emozioni, amicizie e nuove possibilità.",
+        copertina:"https://m.media-amazon.com/images/I/81uhDKHfqwL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Love & Olives",
+        autore: "Jenna Evans Welch",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Liv parte per la Grecia insieme al padre, alla ricerca della città perduta di Atlantide. Il viaggio le farà riscoprire la famiglia e i sentimenti.",
+        copertina:"https://m.media-amazon.com/images/I/811SF71X0PL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "A un metro da te",
+        autore: "Rachael Lippincott",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Stella e Will si incontrano in ospedale e si innamorano, ma la loro malattia impedisce loro di avvicinarsi fisicamente.",
+        copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5okZNMIV_bTXjPLtXwJhcbiTdH3IInaC-LAGAuaTP4ySGY-A_DEGhh04p&s=10"
+    },
+
+    {
+        titolo: "Il sole è anche una stella",
+        autore: "Nicola Yoon",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Daniel e Natasha si incontrano a New York. Hanno idee diverse sul destino e sull'amore, ma un incontro casuale potrebbe cambiare tutto.",
+        copertina:"https://www.sperling.it/content/uploads/2019/07/978882006794HIG.JPG"
+    },
+
+    {
+        titolo: "Noi due ai confini del mondo",
+        autore: "Nicola Yoon",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Una storia che racconta il legame tra due ragazzi molto diversi, le difficoltà familiari e il desiderio di trovare il proprio posto nel mondo.",
+        copertina:"https://m.media-amazon.com/images/I/71DdjOMAO1L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Eleanor & Park",
+        autore: "Rainbow Rowell",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Eleanor e Park sono due adolescenti diversi che iniziano a conoscersi grazie alla musica e ai fumetti. Tra loro nasce un amore speciale.",
+        copertina:"https://m.media-amazon.com/images/I/71u8kDfMlTL._UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Fangirl",
+        autore: "Rainbow Rowell",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Cath affronta il primo anno di università, nuove amicizie, cambiamenti familiari e un ragazzo che potrebbe farle battere il cuore.",
+        copertina:"https://m.media-amazon.com/images/I/71XB+OJbpiL._AC_UF350,350_QL50_.jpg"
+    },
+
+    {
+        titolo: "Colpa delle stelle",
+        autore: "John Green",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Hazel e Augustus si incontrano in un gruppo di supporto. Tra loro nasce un legame profondo che cambierà il loro modo di guardare alla vita.",
+        copertina:"https://pad.mymovies.it/filmclub/2014/01/038/locandina.jpg"
+    },
+
+
+
+
+    {
+        titolo: "Cercando Alaska",
+        autore: "John Green",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Miles arriva in un nuovo collegio e conosce Alaska, una ragazza imprevedibile che cambierà profondamente la sua vita.",
+        copertina:"https://www.ibs.it/images/9788817076340_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "Tartarughe all'infinito",
+        autore: "John Green",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Aza e Daisy cercano di risolvere il mistero della scomparsa di un miliardario, mentre affrontano amicizia, sentimenti e difficoltà personali.",
+        copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZrnqqFuCQPZtWkXGax4nLobDNAiNATlMvWCyvJj8rZg&s"
+    },
+
+    {
+        titolo: "Resta anche domani",
+        autore: "Gayle Forman",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Dopo un grave incidente, Mia si ritrova sospesa tra la vita e la morte. Deve decidere se tornare alla sua famiglia e alle persone che ama.",
+        copertina:"https://m.media-amazon.com/images/I/719DMZfrPgL._AC_UF894,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Per un giorno ancora",
+        autore: "Gayle Forman",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Una storia di seconde possibilità, famiglia, amore e delle scelte che possono cambiare una vita.",
+        copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_3mJv_DYSeY0-pqohQSC8QwLSHNvUHRzzp7OU2VjnIw&s"
+    },
+
+    {
+        titolo: "Noi siamo infinito",
+        autore: "Stephen Chbosky",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Charlie inizia il liceo e incontra nuovi amici che lo aiutano a scoprire l'amicizia, l'amore e il significato di crescere.",
+        copertina:"https://www.sperling.it/content/uploads/2019/10/978882006845HIG.JPG"
+    },
+
+    {
+        titolo: "Heartstopper. Volume 1",
+        autore: "Alice Oseman",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Graphic Novel Romance",
+        trama: "Charlie e Nick si incontrano a scuola e diventano amici. Con il tempo il loro rapporto si trasforma in qualcosa di speciale.",
+        copertina:"https://www.lafeltrinelli.it/images/9781444951394_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "Heartstopper. Volume 2",
+        autore: "Alice Oseman",
+        eta: 13,
+        categoria: "Young Adult",
+        genere: "Graphic Novel Romance",
+        trama: "Nick e Charlie continuano a conoscersi e cercano di comprendere i propri sentimenti e come comunicarli alle persone a cui vogliono bene.",
+        copertina:"https://m.media-amazon.com/images/I/71saGOo1SDL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Heartstopper. Volume 3",
+        autore: "Alice Oseman",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Graphic Novel Romance",
+        trama: "Nick e Charlie affrontano nuove esperienze, amicizie e difficoltà, rafforzando il loro rapporto.",
+        copertina:"https://m.media-amazon.com/images/I/7101vSjrG+L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Heartstopper. Volume 4",
+        autore: "Alice Oseman",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Graphic Novel Romance",
+        trama: "La relazione tra Nick e Charlie cresce, ma i due ragazzi devono affrontare anche momenti delicati e importanti cambiamenti.",
+        copertina:"https://m.media-amazon.com/images/I/712dfq8W4TL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Heartstopper. Volume 5",
+        autore: "Alice Oseman",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Graphic Novel Romance",
+        trama: "Nick e Charlie continuano il loro percorso insieme, imparando ad affrontare il futuro, le emozioni e le difficoltà.",
+        copertina:"https://m.media-amazon.com/images/I/81fMBCnhjZL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Radio Silence",
+        autore: "Alice Oseman",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Frances incontra Aled, un ragazzo con cui condivide la passione per un misterioso podcast. Nasce un'amicizia profonda che li aiuterà a trovare se stessi.",
+        copertina:"https://m.media-amazon.com/images/I/61VCv+RIH7L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Solitaire",
+        autore: "Alice Oseman",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Tori Spring è una ragazza solitaria che si ritrova coinvolta in una serie di eventi misteriosi nella sua scuola.",
+        copertina:"https://www.lafeltrinelli.it/images/9788804801115_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "Dammi mille baci",
+        autore: "Tillie Cole",
+        eta: 16,
+        categoria: "Young Adult",
+        genere: "Emotional Romance",
+        trama: "Poppy e Rune si conoscono da bambini e condividono un legame speciale. La loro storia racconta un amore intenso e ricco di emozioni.",
+        copertina:"https://www.lafeltrinelli.it/images/9791255171065_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "Il fabbricante di lacrime",
+        autore: "Erin Doom",
+        eta: 16,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Nica e Rigel crescono insieme dopo essere stati adottati dalla stessa famiglia. Tra segreti, paure e sentimenti nasce una relazione complicata.",
+        copertina:"https://www.ibs.it/images/9791259570277_0_0_536_0_75.jpg"
+    },
+
+    {
+        titolo: "Liberi come la neve",
+        autore: "Rita Nardi",
+        eta: 16,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Una storia romantica in cui i protagonisti devono affrontare il passato e imparare a fidarsi.",
+        copertina:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkXxaJ1UBDCSadK2f8SC380ZNMiaddknH8T38LFHn8FS48t6vTfukajQA&s=10"
+    },
+
+    {
+        titolo: "La probabilità statistica dell'amore a prima vista",
+        autore: "Jennifer E. Smith",
+        eta: 14,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Hadley perde il volo e incontra Oliver in aeroporto. Un viaggio inaspettato potrebbe trasformarsi in una storia d'amore.",
+        copertina:"https://www.sperling.it/content/uploads/2012/05/978887339582HIG.JPG"
+    },
+
+    {
+        titolo: "Love, Rosie",
+        autore: "Cecelia Ahern",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Romance",
+        trama: "Rosie e Alex sono amici fin dall'infanzia. La vita li porta in direzioni diverse, ma il loro legame continua a resistere nel tempo.",
+        copertina:"https://m.media-amazon.com/images/M/MV5BMTk0Mzg1MTU1MF5BMl5BanBnXkFtZTgwMjU3ODI2MzE@._V1_FMjpg_UX1000_.jpg"
+    },
+
+    {
+        titolo: "Eppure cadiamo felici",
+        autore: "Enrico Galiano",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Gioia è una ragazza particolare che si sente diversa dagli altri. L'incontro con Lo la porterà a scoprire nuove emozioni.",
+        copertina:"https://www.ibs.it/images/9788811672319_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "L'estate delle regole infrante",
+        autore: "K. L. Walther",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Romance",
+        trama: "Durante una vacanza estiva in una casa al mare, Meredith partecipa a una tradizione di famiglia e scopre nuove emozioni e sentimenti.",
+        copertina:"https://m.media-amazon.com/images/I/612-R978TgL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Vorrei che tu fossi qui",
+        autore: "Dustin Thao",
+        eta: 15,
+        categoria: "Young Adult",
+        genere: "Young Adult Contemporary",
+        trama: "Una storia emozionante che parla di amore, perdita, amicizia e della difficoltà di accettare la realtà.",
+        copertina:"https://www.newtoncompton.com/files/cache/bookimages/19145/vorrei-che-tu-fossi-qui-x1000.jpg"
+    },
+
+    {
+        titolo: "Game of Gods. Discesa agli inferi",
+        autore: "Hazel Riley",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Un mondo di segreti, potere e relazioni complicate. I protagonisti si ritrovano coinvolti in un intreccio di desideri e rivalità.",
+        copertina: "https://m.media-amazon.com/images/I/71iLuUTVTwL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Game of Chaos. Redenzione",
+        autore: "Hazel Riley",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia di passioni, conflitti e scelte difficili, nella quale i protagonisti devono confrontarsi con il proprio passato.",
+        copertina: "https://m.media-amazon.com/images/I/61FlJHcJ11L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Game of Titans. Ascesa al paradiso",
+        autore: "Hazel Riley",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Potere, ambizione e sentimenti si intrecciano in una storia ricca di segreti e tensione.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5J4TqJ-3fDXSQtoCrPwaMU2g0H3McWbIVD72gWV92Tg&s=10"
+    },
+
+    {
+        titolo: "Game of Lust. Tentazione",
+        autore: "Hazel Riley",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia intensa in cui attrazione, desiderio e segreti mettono alla prova i protagonisti.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaQlfz7QgdIAsh4rgQ9XoxkMnnq6aZ_jdgYmYc6De6PA&s=10"
+    },
+
+    {
+        titolo: "Game of Desire. Devozione",
+        autore: "Hazel Riley",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Un racconto di passione e sentimenti complicati, in cui fiducia e desiderio si scontrano.",
+        copertina: "https://m.media-amazon.com/images/I/61D0cFSFEOL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Game of Olympus. Catarsi",
+        autore: "Hazel Riley",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Il mondo dei protagonisti è attraversato da segreti, rivalità e decisioni che possono cambiare ogni cosa.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ5qwbyMYym0h1lhsGnJq1oJF9IohXMBROoUK8TNPM3A&s=10"
+    },
+
+    {
+        titolo: "Limitless. Senza morale",
+        autore: "B. Karim",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia intensa che esplora il lato più complicato delle relazioni e dei sentimenti.",
+        copertina: "https://m.media-amazon.com/images/I/71sg1ZpSijL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Limitless. Senza pietà",
+        autore: "B. Karim",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Tra segreti, emozioni e situazioni difficili, i protagonisti devono affrontare le conseguenze delle proprie scelte.",
+        copertina: "https://m.media-amazon.com/images/I/716bKCXFh5L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Limitless. Senza paura",
+        autore: "B. Karim",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia di passione e conflitti, nella quale il coraggio diventa fondamentale per affrontare il passato.",
+        copertina: "https://m.media-amazon.com/images/I/81KUz5wPoDL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Punk 57. Insieme siamo perfetti",
+        autore: "Penelope Douglas",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Misha e Ryen si conoscono attraverso lettere, ma quando finalmente si incontrano la realtà è molto diversa da quella immaginata.",
+        copertina: "https://m.media-amazon.com/images/I/81l9pHIvghL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Il mio sbaglio più grande",
+        autore: "Penelope Douglas",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia di vendetta, segreti e relazioni complicate, in cui il passato ritorna a sconvolgere il presente.",
+        copertina: "https://m.media-amazon.com/images/I/813MfzcYHLL._UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Mai e poi mai",
+        autore: "Penelope Douglas",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Un intreccio di sentimenti, rivalità e desideri che mette alla prova i protagonisti.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU0P29WFdONqn6s6KJN6jpnAeWM7TzpY81YjqGUPqeuA&s=10"
+    },
+
+    {
+        titolo: "L'amore sbagliato",
+        autore: "Penelope Douglas",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una relazione complicata in cui attrazione, segreti e differenze personali rendono tutto più difficile.",
+        copertina: "https://www.newtoncompton.com/files/cache/bookimages/19233/lamore-sbagliato-misconduct-x1000.jpg"
+    },
+
+    {
+        titolo: "Coprifuoco a mezzanotte",
+        autore: "Penelope Douglas",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia dalle atmosfere oscure, tra tensione, segreti e relazioni complesse.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGzbUEWAXC-W8ONWIJppmZiWEHGiwkqmC5sO-SrCrNCQ&s=10"
+    },
+
+    {
+        titolo: "Hurricane. Tu sei l'inaspettato",
+        autore: "Mary Mave",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Un incontro inaspettato dà inizio a una relazione intensa, segnata da emozioni e difficoltà.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG6ky2vSiO6PfM9G0B9DblZttYoArXGSV2JYSRW8p6dAb1vhjLlfGD4gws&s=10"
+    },
+
+    {
+        titolo: "Wicked Crown",
+        autore: "Sabrina Pennacchio",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Fantasy Romance",
+        trama: "Un mondo fantasy dalle atmosfere oscure, dove potere, segreti e sentimenti si intrecciano.",
+        copertina: "https://m.media-amazon.com/images/I/71oBqJbZ2rL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Cicatrici",
+        autore: "Stefania Pav",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia che affronta le ferite del passato e le difficoltà di costruire un legame tra persone segnate dalla vita.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTl6jY1cPEKV7C_co_IgBPWF96-OsGariP06zAzZ_YODQ&s=10"
+    },
+
+    {
+        titolo: "Letters to... Heaven & Hell",
+        autore: "Carmen N. Lonigro",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia dalle atmosfere intense, in cui emozioni, segreti e relazioni complesse si intrecciano.",
+        copertina: "https://www.ibs.it/images/9791282139571_0_0_0_190_75.jpg"
+    },
+
+    {
+        titolo: "Salvami l'anima",
+        autore: "Carmen Vocca",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "La storia di Jason e Maximiliano, tra sentimenti complicati, difficoltà e desiderio di trovare la propria strada.",
+        copertina: "https://pavedizioni.it/wp-content/uploads/2024/11/cover_salvami-lanima_fronte.jpg"
+    },
+
+    {
+        titolo: "Niente è impossibile",
+        autore: "Stella Costa",
+        eta: 18,
+        categoria: "Dark Romance",
+        genere: "Dark Romance",
+        trama: "Una storia d'amore intensa che racconta le difficoltà, le emozioni e le sfide che i protagonisti devono affrontare.",
+        copertina: "https://www.ibs.it/images/9791259738929_0_0_424_0_75.jpg"
+    },
+
+    {
+        titolo: "Fourth Wing",
+        autore: "Rebecca Yarros",
+        eta: 17,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Violet viene costretta a entrare nell'accademia militare di Basgiath per diventare una cavaliera di draghi. Tra prove mortali, magia e rivalità, incontrerà Xaden, un ragazzo pericoloso che potrebbe cambiare il suo destino.",
+        copertina: "https://m.media-amazon.com/images/I/81bX0ZwQ8cL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Iron Flame",
+        autore: "Rebecca Yarros",
+        eta: 17,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Violet affronta nuove sfide all'interno dell'accademia. Tra segreti, tradimenti, draghi e sentimenti sempre più intensi, dovrà trovare la forza per proteggere ciò che ama.",
+        copertina: "https://m.media-amazon.com/images/I/81CF48oIh+L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Sangue e cenere",
+        autore: "Jennifer L. Armentrout",
+        eta: 18,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Poppy è la Vergine, una ragazza destinata a una vita solitaria e piena di regole. L'incontro con Hawke metterà in discussione tutto ciò in cui ha sempre creduto.",
+        copertina: "https://m.media-amazon.com/images/I/71xURCD04GL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Divini rivali",
+        autore: "Rebecca Ross",
+        eta: 16,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Iris e Roman sono due giovani giornalisti rivali. Attraverso misteriose lettere magiche iniziano a conoscersi, mentre una guerra tra divinità minaccia il loro mondo.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1pc4GWSz4ZlYyYiyEMbhAMtcXMlnwZpHDz1_2FfgmEw&s"
+    },
+
+    {
+        titolo: "Powerless. Potere e inganno",
+        autore: "Lauren Roberts",
+        eta: 16,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "In un regno dove solo i dotati di poteri magici possono sopravvivere, Paedyn è una ragazza senza abilità che deve nascondere la propria identità. L'incontro con il principe Kai renderà tutto più complicato.",
+        copertina: "https://m.media-amazon.com/images/I/81TDiLmks2L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Lightlark",
+        autore: "Alex Aster",
+        eta: 16,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Ogni cento anni l'isola di Lightlark ospita un gioco pericoloso destinato a spezzare sei maledizioni. Isla dovrà affrontare alleanze, inganni e sentimenti inaspettati.",
+        copertina: "https://m.media-amazon.com/images/I/71K2eF8kGoL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "One Dark Window",
+        autore: "Rachel Gillig",
+        eta: 16,
+        categoria: "Fantasy Romance",
+        genere: "Dark Fantasy Romance",
+        trama: "Elspeth vive in un regno avvolto da una misteriosa magia oscura. Dentro la sua mente abita una creatura pericolosa e un incontro inaspettato potrebbe cambiare il destino del regno.",
+        copertina: "https://m.media-amazon.com/images/I/91fXoFQwgCL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Il principe crudele",
+        autore: "Holly Black",
+        eta: 15,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Jude è un'umana cresciuta nel mondo crudele delle fate. Determinata a conquistare il proprio posto a corte, si ritrova coinvolta in intrighi e rivalità con il principe Cardan.",
+        copertina: "https://m.media-amazon.com/images/I/71HLDcggJBL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Un patto con il Re degli Elfi",
+        autore: "Elise Kova",
+        eta: 16,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "Luella scopre di essere destinata a diventare la moglie del Re degli Elfi. Trasportata in un regno magico, dovrà affrontare un destino che non aveva mai immaginato.",
+        copertina: "https://m.media-amazon.com/images/I/71jzQWkK8EL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Il trono dei caduti",
+        autore: "Kerri Maniscalco",
+        eta: 18,
+        categoria: "Fantasy Romance",
+        genere: "Fantasy Romance",
+        trama: "In un mondo governato da principi demoniaci, una giovane donna si ritrova coinvolta in un gioco pericoloso insieme a un misterioso principe. Tra enigmi, tentazioni e segreti nascerà un'alleanza inaspettata.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxfQpANuVtjKnwCbYZZw-3KAehyCR-0aI4G7HHuz8U9sil_B1rZl8RAwGC&s=10"
+    },
+
+
+    {
+        titolo: "Due cuori in affitto",
+        autore: "Felicia Kingsley",
+        eta: 16,
+        categoria: "Contemporary Romance",
+        genere: "Contemporary Romance",
+        trama: "Summer e Blake si ritrovano a condividere la stessa casa durante una vacanza. Tra battibecchi, caratteri opposti e situazioni divertenti, scopriranno che l'amore può arrivare quando meno te lo aspetti.",
+        copertina: "https://m.media-amazon.com/images/I/51PIZoniRYL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Il contratto",
+        autore: "Elle Kennedy",
+        eta: 17,
+        categoria: "Contemporary Romance",
+        genere: "Sports Romance",
+        trama: "Hannah accetta di aiutare Garrett, una stella della squadra di hockey, con lo studio. In cambio lui dovrà aiutarla a conquistare il ragazzo che le piace. Un accordo apparentemente semplice si trasformerà in qualcosa di più.",
+        copertina: "https://m.media-amazon.com/images/I/71JhWP5p+8L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Cose che non abbiamo mai superato",
+        autore: "Lucy Score",
+        eta: 18,
+        categoria: "Contemporary Romance",
+        genere: "Small Town Romance",
+        trama: "Naomi arriva in una piccola cittadina per aiutare la sorella gemella, ma si ritrova ad affrontare una serie di imprevisti. L'incontro con Knox, un uomo burbero e misterioso, cambierà i suoi piani.",
+        copertina: "https://m.media-amazon.com/images/I/81ey20ls48L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Facciamo finta che mi ami",
+        autore: "Elena Armas",
+        eta: 17,
+        categoria: "Contemporary Romance",
+        genere: "Fake Dating Romance",
+        trama: "Josie e Matthew si ritrovano coinvolti in una relazione di facciata. Quello che dovrebbe essere soltanto un accordo diventa sempre più complicato quando iniziano a nascere sentimenti autentici.",
+        copertina: "https://m.media-amazon.com/images/I/61Ifr27flML._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "It Ends With Us. Siamo noi a dire basta",
+        autore: "Colleen Hoover",
+        eta: 18,
+        categoria: "Contemporary Romance",
+        genere: "Contemporary Romance",
+        trama: "Lily sembra aver trovato una nuova felicità accanto a Ryle, ma il ritorno di Atlas, una persona importante del suo passato, la porterà a confrontarsi con scelte difficili e con il significato dell'amore.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-6UNQXnWNb3UOOjL2a0VzfSxUM4Uh3Ak2dShArJKtuwBvnbi5Uq6h5Jo&s=10"
+    },
+
+    {
+        titolo: "Roommate. AAA cerco te",
+        autore: "Sarina Bowen",
+        eta: 17,
+        categoria: "Contemporary Romance",
+        genere: "Roommate Romance",
+        trama: "Una convivenza inaspettata mette due persone a stretto contatto. Tra momenti divertenti, attrazione e nuove scoperte, la quotidianità potrebbe trasformarsi in una storia d'amore.",
+        copertina: "https://m.media-amazon.com/images/I/716jBGW6tiL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Non è un paese per single",
+        autore: "Felicia Kingsley",
+        eta: 16,
+        categoria: "Contemporary Romance",
+        genere: "Small Town Romance",
+        trama: "In un piccolo paese toscano dove tutti sembrano conoscere tutti, Elisa si ritrova a fare i conti con il passato, la famiglia e un incontro che potrebbe cambiare il suo futuro sentimentale.",
+        copertina: "https://m.media-amazon.com/images/I/61-Rk99ku+L._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Matrimonio di convenienza",
+        autore: "Felicia Kingsley",
+        eta: 16,
+        categoria: "Contemporary Romance",
+        genere: "Fake Marriage Romance",
+        trama: "Una proposta particolare porta i protagonisti a organizzare un matrimonio di convenienza. Tra incomprensioni, situazioni esilaranti e attrazione, il loro accordo potrebbe trasformarsi in vero amore.",
+        copertina: "https://m.media-amazon.com/images/I/61IcX91dlDL._AC_UF350,350_QL50_.jpg"
+    },
+
+    {
+        titolo: "Appuntamento in affitto",
+        autore: "Beth O'Leary",
+        eta: 16,
+        categoria: "Contemporary Romance",
+        genere: "Contemporary Romance",
+        trama: "Tiffy e Leon condividono lo stesso appartamento senza incontrarsi quasi mai: lei lo usa di giorno e lui di notte. Attraverso messaggi e piccoli gesti iniziano a conoscersi e a creare un legame speciale.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC9v8lEdVjj-M1ez74geLaCl23AV9p9YKwrl0BsT-qHQ&s=10"
+    },
+
+    {
+        titolo: "The Love Hypothesis. Il problema dell'amore",
+        autore: "Ali Hazelwood",
+        eta: 17,
+        categoria: "Contemporary Romance",
+        genere: "Academic Romance",
+        trama: "Olive, una giovane ricercatrice, convince il professore Adam Carlsen a fingere di essere il suo fidanzato. Ma tra laboratori, ricerca scientifica e appuntamenti improvvisati, la finzione rischia di diventare realtà.",
+        copertina: "https://m.media-amazon.com/images/I/71eMA44ixSL._UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Book Lovers",
+        autore: "Emily Henry",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Romantic Comedy",
+        trama: "Nora è un'agente letteraria che ama il suo lavoro. Durante una vacanza incontra Charlie, un editor con cui ha sempre avuto un rapporto complicato. Tra battibecchi e situazioni divertenti potrebbe nascere qualcosa di inaspettato.",
+        copertina: "https://m.media-amazon.com/images/I/61ERHxGvCyL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Beach Read",
+        autore: "Emily Henry",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Romantic Comedy",
+        trama: "January è una scrittrice romantica in crisi creativa. Quando incontra Augustus, uno scrittore dal carattere completamente diverso dal suo, i due decidono di scambiarsi i generi letterari. La sfida porterà a scoperte sorprendenti.",
+        copertina: "https://m.media-amazon.com/images/I/71kdiN5Y1YL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "People We Meet on Vacation",
+        autore: "Emily Henry",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Friends to Lovers",
+        trama: "Poppy e Alex sono amici da anni e hanno viaggiato insieme per tante estati. Dopo un lungo periodo senza parlarsi, decidono di fare un ultimo viaggio insieme. Forse la loro amicizia nasconde qualcosa di più.",
+        copertina: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1748450140i/54985743.jpg"
+    },
+
+    {
+        titolo: "The Spanish Love Deception",
+        autore: "Elena Armas",
+        eta: 17,
+        categoria: "Rom-Com",
+        genere: "Fake Dating Romance",
+        trama: "Catalina ha bisogno di un accompagnatore per un matrimonio in Spagna. Aaron, il suo collega con cui non va affatto d'accordo, si offre di accompagnarla. Tra finzioni, battibecchi e momenti imbarazzanti, l'attrazione diventa sempre più difficile da ignorare.",
+        copertina: "https://www.lafeltrinelli.it/images/9781398515635_0_0_536_0_75.jpg"
+    },
+
+    {
+        titolo: "L'amore in vacanza",
+        autore: "Christina Lauren",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Holiday Romance",
+        trama: "Maelyn desidera rivivere una vacanza perfetta con i suoi amici, ma un misterioso evento sembra riportarla sempre allo stesso periodo. Tra seconde possibilità e sentimenti nascosti, dovrà capire cosa desidera davvero.",
+        copertina: "https://m.media-amazon.com/images/I/71gVMd5R4AL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "The Unhoneymooners",
+        autore: "Christina Lauren",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Enemies to Lovers",
+        trama: "Olive e Ethan non si sopportano, ma un imprevisto li porta a partire insieme per una vacanza alle Hawaii. Costretti a fingere di essere una coppia, scopriranno che forse non si conoscono così bene come pensavano.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQihr8jjaWNzDTZPFh6ryFonV8P7v21k2i7UFbEuk9dEQ&s=10"
+    },
+
+    {
+        titolo: "La regola dell'amico",
+        autore: "Elle Kennedy",
+        eta: 17,
+        categoria: "Rom-Com",
+        genere: "Friends to Lovers",
+        trama: "Due amici si trovano a mettere in discussione le regole della loro amicizia quando i sentimenti iniziano a cambiare. Tra momenti divertenti e situazioni imbarazzanti, dovranno capire se vale la pena rischiare tutto per amore.",
+        copertina: "https://www.donzellifiettaagency.com/wp-content/uploads/2024/09/Elle-Kennedy-Nessuna-regola-in-amore-The-Dixon-Rule.jpg"
+    },
+
+    {
+        titolo: "la ragazza fantasma",
+        autore: "Sophie Kinsella",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Romantic Comedy",
+        trama: "Una giovane donna si ritrova coinvolta in situazioni imprevedibili, equivoci e incontri inaspettati. Tra risate e sentimenti, scoprirà che l'amore può arrivare nei momenti più strani.",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUHUArkM8kYxtvThvYLISElESs8P2S2HDbR2V9ePud9WrKwKGZ3O1yi_x9&s=10"
+    },
+
+    {
+        titolo: "Love song",
+        autore: "Elle Kennedy",
+        eta: 16,
+        categoria: "Rom-Com",
+        genere: "Roommate Romance",
+        trama: "Blake Logan si rifugia nella casa di famiglia sul lago Tahoe dopo una brutta rottura per stare lontana da tutto e tutti. Qui incontra Wyatt Graham, cantautore in cerca di ispirazione e suo vecchio amore non corrisposto (più grande di lei di quattro anni e figlio del migliore amico del padre): tra convivenza forzata, vecchi rancori e una forte attrazione, il loro legame viene messo alla prova da un evento drammatico prima di potersi ritrovare ",
+        copertina: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqCm9aiwO9gpj_-zcD0AnnyGUPC2biIOOMIqTrfYKZwySYhIPgEKe_fHc&s=10"
+    },
+
+    {
+        titolo: "The Hating Game",
+        autore: "Sally Thorne",
+        eta: 17,
+        categoria: "Rom-Com",
+        genere: "Enemies to Lovers",
+        trama: "Lucy e Joshua lavorano nello stesso ufficio e si considerano acerrimi nemici. Tra competizione, frecciatine e sfide quotidiane, la loro rivalità potrebbe nascondere un'attrazione inaspettata.",
+        copertina: "https://m.media-amazon.com/images/I/51lB+L898AL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Il contratto",
+        autore: "Elle Kennedy",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "College Romance / Hockey Romance",
+        trama: "Hannah Wells e Garrett Graham stringono un accordo: lei lo aiuterà a superare un esame e lui fingerà di essere il suo ragazzo. Quello che nasce come un semplice patto si trasformerà in qualcosa di molto più profondo.",
+        copertina: "https://m.media-amazon.com/images/I/71pckjfqLOL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Lo sbaglio",
+        autore: "Elle Kennedy",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "College Romance / Hockey Romance",
+        trama: "John Logan è un giocatore di hockey con un futuro promettente, ma un incontro inaspettato con Grace Ivers cambierà i suoi piani. Tra errori, seconde possibilità e sentimenti, Logan dovrà capire cosa vuole davvero.",
+        copertina: "https://www.lafeltrinelli.it/images/9788822783387_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "Il tradimento",
+        autore: "Elle Kennedy",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "College Romance / Hockey Romance",
+        trama: "Dean Di Laurentis è abituato ad avere tutto ciò che desidera. Quando incontra Allie Hayes, una ragazza completamente diversa da lui, scoprirà che non tutto può essere controllato.",
+        copertina: "https://m.media-amazon.com/images/I/71Z35TiT+VL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "L'imprevisto",
+        autore: "Elle Kennedy",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "College Romance / Hockey Romance",
+        trama: "Sabrina James ha grandi ambizioni e non vuole distrazioni. Tucker è un giocatore di hockey tranquillo e determinato. Un incontro cambierà i loro progetti e li porterà ad affrontare insieme il futuro.",
+        copertina: "https://www.lafeltrinelli.it/images/9788822783967_0_0_536_0_75.jpg"
+    },
+
+    {
+        titolo: "L'eredità",
+        autore: "Elle Kennedy",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "College Romance / Hockey Romance",
+        trama: "Le quattro coppie della Briar University tornano protagoniste. Garrett e Hannah, Logan e Grace, Dean e Allie, Tucker e Sabrina affrontano nuove sfide, cambiamenti e importanti decisioni nella loro vita insieme.",
+        copertina: "https://www.lafeltrinelli.it/images/9788822786333_425668210_0_0_0_75.jpg"
+    },
+{
+        titolo: "The Wall of Winnipeg and Me",
+        autore: "Mariana Zapata",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Football Romance",
+        trama: "Vanessa decide di lasciare il lavoro come assistente personale di Aiden Graves, famoso giocatore di football. Quando lui le propone un accordo inaspettato, la loro vita cambia completamente.",
+        copertina: "https://m.media-amazon.com/images/I/81gaH4hZIJL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Kulti",
+        autore: "Mariana Zapata",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Soccer Romance",
+        trama: "Sal Casillas è una giovane calciatrice che ammira da sempre Reiner Kulti, il suo idolo sportivo. Quando lui diventa il suo allenatore, il loro rapporto si trasforma lentamente in qualcosa di speciale.",
+        copertina: "https://m.media-amazon.com/images/I/81NoxwSwKDL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Icebreaker",
+        autore: "Hannah Grace",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Hockey Romance",
+        trama: "Anastasia è una pattinatrice artistica determinata a raggiungere i propri obiettivi. Quando la pista viene condivisa con la squadra di hockey, si ritrova a dover collaborare con Nate, il capitano della squadra.",
+        copertina: "https://m.media-amazon.com/images/I/61RCbBCA6vL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Wildfire",
+        autore: "Hannah Grace",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Hockey Romance",
+        trama: "Aurora e Russ si incontrano durante una vacanza e tra loro nasce subito un'attrazione. Si ritrovano poi a lavorare nello stesso campo estivo, dove dovranno mantenere le distanze e rispettare le regole.",
+        copertina: "https://m.media-amazon.com/images/I/71arVsjRqcL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Consider Me",
+        autore: "Becka Mack",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Hockey Romance",
+        trama: "Carter Beckett è una famosa stella dell'hockey, abituata a non prendere sul serio le relazioni. Quando incontra Olivia, scopre che conquistare il suo cuore sarà una sfida completamente diversa.",
+        copertina: "https://m.media-amazon.com/images/I/810oTWnwUhL._AC_UF1000,1000_QL80_.jpg"
+    },
+
+    {
+        titolo: "Collide",
+        autore: "Bal Khabra",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Hockey Romance",
+        trama: "Summer è una studentessa universitaria concentrata sui propri obiettivi. L'incontro con Aiden, un giocatore di hockey, la porterà a mettere in discussione le proprie convinzioni sull'amore e sulle relazioni.",
+        copertina: "https://www.lafeltrinelli.it/images/9788817188142_0_0_0_0_0.jpg"
+    },
+
+    {
+        titolo: "The Right Move",
+        autore: "Liz Tomforde",
+        eta: 18,
+        categoria: "Sport Romance",
+        genere: "Basketball Romance",
+        trama: "Ryan è un famoso giocatore di basket che ha bisogno di tranquillità e concentrazione. Indy, la migliore amica di sua sorella, finisce per diventare la sua coinquilina. La convivenza farà nascere sentimenti inaspettati.",
+        copertina: "https://www.lafeltrinelli.it/images/9791255171126_0_0_536_0_75.jpg"
+    },
+];
+
+
+// ========================================
+// IMMAGINE SOSTITUTIVA
+// ========================================
+
+const copertinaVuota =
+    "https://placehold.co/150x220/FFF0F5/C71585?text=Romance+World";
+
+
+// ========================================
+// PROTEZIONE DEI TESTI
+// ========================================
+
+function sicuro(testo) {
+
+    let risultato = String(testo);
+
+    risultato = risultato.replace(/&/g, "&amp;");
+    risultato = risultato.replace(/</g, "&lt;");
+    risultato = risultato.replace(/>/g, "&gt;");
+    risultato = risultato.replace(/"/g, "&quot;");
+    risultato = risultato.replace(/'/g, "&#39;");
+
+    return risultato;
+
+}
+
+
+// ========================================
+// MOSTRA I LIBRI
+// ========================================
+
+
+// ========================================
+// FILTRO DELLE CATEGORIE
+// ========================================
+
+function filtraCategoria(categoria) {
+
+    let risultati;
+
+    if (categoria === "Tutti") {
+
+        risultati = libri;
+
+    } else {
+
+        risultati = libri.filter(function(libro) {
+
+            return libro.categoria === categoria;
+
+        });
+
+    }
+
+    mostraLibri(risultati);
+
+    document.getElementById("titoloDettaglio").textContent = "";
+
+    document.getElementById("dettaglio").textContent =
+        "Clicca sulla copertina di un libro per scoprirne la trama! 💕";
+
+}
+
+function mostraLibri(elenco) {
+
+    let catalogo = document.getElementById("catalogo");
+
+    catalogo.innerHTML = "";
+
+    if (elenco.length === 0) {
+        catalogo.textContent =
+            "Non ci sono ancora libri in questa categoria. 💗";
+        return;
+    }
+
+    elenco.forEach(function(libro) {
+
+        let indice = libri.indexOf(libro);
+
+        let card = document.createElement("div");
+
+        card.className = "card";
+
+        card.style.display = "inline-block";
+        card.style.width = "180px";
+        card.style.verticalAlign = "top";
+
+        let immagine = document.createElement("img");
+
+        immagine.id = "copertina-" + indice;
+
+        // USA DIRETTAMENTE IL LINK INSERITO NEL LIBRO
+        immagine.src = libro.copertina || copertinaVuota;
+
+        immagine.width = 130;
+        immagine.height = 190;
+        immagine.style.objectFit = "contain";
+
+        immagine.alt = "Copertina di " + libro.titolo;
+
+        immagine.onerror = function() {
+            this.onerror = null;
+            this.src = copertinaVuota;
+        };
+
+        immagine.style.cursor = "pointer";
+
+        immagine.onclick = function() {
+            mostraDettaglio(indice);
+        };
+
+        let titolo = document.createElement("h3");
+        titolo.textContent = libro.titolo;
+
+        let autore = document.createElement("p");
+        autore.textContent = libro.autore;
+
+        let pulsante = document.createElement("button");
+
+        pulsante.textContent = "Scopri il libro 💗";
+
+        pulsante.onclick = function() {
+            mostraDettaglio(indice);
+        };
+
+        card.appendChild(immagine);
+        card.appendChild(titolo);
+        card.appendChild(autore);
+        card.appendChild(pulsante);
+
+        catalogo.appendChild(card);
+
+    });
+
+}
+
+
+
+// ========================================
+// DETTAGLIO DEL LIBRO
+// ========================================
+
+function mostraDettaglio(indice) {
+
+    let libro = libri[indice];
+
+    if (!libro) return;
+
+    document.getElementById("titoloDettaglio").textContent =
+        libro.titolo;
+
+    document.getElementById("dettaglio").innerHTML = `
+
+        <img src="${sicuro(libro.copertina || copertinaVuota)}"
+             width="150"
+             alt="Copertina del libro"
+             onerror="this.onerror=null; this.src='${copertinaVuota}';">
+
+        <h2>${sicuro(libro.titolo)}</h2>
+
+        <p>
+            <b>Autrice:</b>
+            ${sicuro(libro.autore)}
+        </p>
+
+        <p>
+            <b>Età consigliata:</b>
+            ${libro.eta}+ anni
+        </p>
+
+        <p>
+            <b>Genere:</b>
+            ${sicuro(libro.genere)}
+        </p>
+
+        <p>
+            <b>Categoria:</b>
+            ${sicuro(libro.categoria)}
+        </p>
+
+        <h3>Trama</h3>
+
+        <p>${sicuro(libro.trama)}</p>
+
+        <a href="profilo.html?libro=${encodeURIComponent(libro.titolo)}">
+
+            <button>
+                Aggiungi alla mia libreria 💗
+            </button>
+
+        </a>
+
+    `;
+
+    document.getElementById("dettaglio").scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "start"
+
+    });
+
+}
+
+
+// ========================================
+// AVVIO DEL CATALOGO
+// ========================================
+
+function avviaCatalogo() {
+
+    mostraLibri(libri);
+
+    
+
+}
+
+avviaCatalogo();
+
+</script>
+
+</body>
+</html>
